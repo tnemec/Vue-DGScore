@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   style="fill:#ffffff"
+   id="svg15"
+   height="150"
+   width="150"
+   version="1.1">
+  <metadata
+     id="metadata19">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Abstract user icon</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <title
+     id="title2">Abstract user icon</title>
+  <defs
+     id="defs7">
+    <clipPath
+       id="circular-border">
+      <circle
+         id="circle4"
+         r="250"
+         cy="300"
+         cx="300" />
+    </clipPath>
+  </defs>
+  <g
+     transform="matrix(0.26785714,0,0,0.26785714,-5.3571428,-5.35714)"
+     id="g4499">
+    <circle
+       style="fill:#000000"
+       cx="300"
+       cy="300"
+       r="280"
+       id="circle9" />
+    <circle
+       cx="300"
+       cy="230"
+       r="100"
+       id="circle11" />
+    <circle
+       cx="300"
+       cy="550"
+       r="190"
+       clip-path="url(#circular-border)"
+       id="circle13" />
+  </g>
+</svg>
