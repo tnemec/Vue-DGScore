@@ -1,6 +1,14 @@
 # vue-dgscore
 
-> A Vue.js project
+> Disc Golf score keeping app built with the VueJS framework
+
+
+## Work in progress
+
+This project is a work in progress with the goal to develop a basic single page web application as a learning tool for JavaScript frameworks.
+
+It's my intention to build the same design using the React framework and AngularJS.
+
 
 ## Build Setup
 
