@@ -21,7 +21,7 @@ export default {
 	name: "selectPlayer",
 	data() {
 		return {
-			tempPlayers : this.$store.state.round.players
+			tempPlayers : this.$store.state.round.players || []
 		}
 	},
 	created() {

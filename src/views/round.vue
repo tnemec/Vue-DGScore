@@ -58,9 +58,11 @@ export default {
   },
   methods: {
   	prevPage() {
+  		this.$store.commit('setDefaultStrokes',this.$store.state.round.currentHole)
   		this.$store.commit('viewHole',this.$store.state.round.currentHole -1)
   	},
   	nextPage() {
+  		this.$store.commit('setDefaultStrokes',this.$store.state.round.currentHole)
   		this.$store.commit('viewHole',this.$store.state.round.currentHole +1)
   	},  
   }

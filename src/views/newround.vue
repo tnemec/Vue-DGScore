@@ -1,6 +1,8 @@
 <template>
   <div class="newRound">
 
+  		<h2>New Round</h2>
+
   		<b-container>
   			<b-row>
 		  		<b-col>

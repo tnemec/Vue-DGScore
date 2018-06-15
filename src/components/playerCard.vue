@@ -20,8 +20,7 @@
 		</div>
 	</div>
 	<div class="extras-bar"></div>
-	<div class="score-chart">
-	</div>
+	<chartLine :scores="player.scorecard"></chartLine>
 
 
 
@@ -32,10 +31,13 @@
 import 'vue-awesome/icons/plus-circle'
 import 'vue-awesome/icons/minus-circle'
 
-
+import chartLine from './chartLine'
 
 export default {
   name: 'playerCard',
+  components: {
+  chartLine
+  },
   props: ['player','index', 'par', 'hole'],
   data() {
   	return {
@@ -46,7 +48,7 @@ export default {
   },
   computed: {
   	currentStrokes() {
-  		return (this.player.scorecard && this.player.scorecard[this.hole]) ? this.player.scorecard[this.hole].s : this.par
+  		return Math.max(this.player.scorecard[this.hole].s || this.par, 0)
   	},
   	score() {
   		return this.$store.getters.playerScore(this.index);
@@ -126,6 +128,7 @@ export default {
 .player-card .player-grid {
 	height: 72px;
 	border-bottom: 1px solid #184159;
+	box-shadow: 0px 4px 4px -1px rgba(0,0,0,0.40);
 }
 .player-card.played  {
 	background: #d7ecf4; /* Old browsers */

@@ -36,16 +36,16 @@ export default new Vuex.Store({
   			i = state.round.currentHole;
   		}
   		return {
-  			num: state.round.course.num[i] || i +1,
-  			dist:  state.round.course.dist[i] || '',
-  			par:  state.round.course.par[i] || state.prefs.defaultPar
+  			num: (state.round.course.num && state.round.course.num[i]) || i +1,
+  			dist: (state.round.course.dist && state.round.course.dist[i]) || '',
+  			par: (state.round.course.par && state.round.course.par[i]) || state.prefs.defaultPar
   		}
   	},
-  	players: (state) => {
+  	players: (state, getters) => {
   		let players = [];
   		for(let i = 0; i < state.round.players.length; i++) {
   			let player = state.round.players[i];
-  			player.score = this.a.getters.playerScore(i);
+  			player.score = getters.playerScore(i);
   			players.push(player)
   		}
   		return players;
@@ -82,6 +82,8 @@ export default new Vuex.Store({
 		state.round.course = selectedCourse;
 	},
 	selectPlayers(state, players) {
+		console.log('select players')
+		console.log(players)
 		state.round.players = players;
 	},
 	resetRound(state) {
@@ -102,7 +104,11 @@ export default new Vuex.Store({
 		state.round.currentHole = startingHole;
 		// reset scorecards
 		for(let player of state.round.players) {
-			player.scorecard = new Array(state.round.course.holes).fill({s:0})
+			let ar = new Array(state.round.course.holes);
+			for(let i = 0; i < ar.length; i++) {
+				ar[i] = {s:0}
+			}
+			player.scorecard = ar;
 		}
 	},
 	viewHole(state, i) {
@@ -118,6 +124,13 @@ export default new Vuex.Store({
 				player.scorecard[payload.hole] = {s:0}
 			}
 			 player.scorecard[payload.hole].s = payload.strokes
+		}
+	},
+	setDefaultStrokes(state, hole) {
+		for(let player of state.round.players) {
+			if(player.scorecard[hole].s == 0) {
+				player.scorecard[hole].s = this.getters.holeData(hole).par;
+			}
 		}
 	}
   }
