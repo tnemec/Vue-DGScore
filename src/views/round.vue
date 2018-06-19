@@ -8,11 +8,19 @@
 				<div class="course-name">{{round.course.name}}</div>
 				<div class="hole-info">{{holeInfo}}</div>
 			</b-col>
-			<b-col cols="2" class="align-right"><div @click.capturet="nextPage" v-if="hasNext"  class="nav"><icon name="angle-right" scale="3"  /></div></b-col>
+			<b-col cols="2" class="align-right">
+				<div @click.capturet="nextPage" v-if="hasNext"  class="nav"><icon name="angle-right" scale="3"  /></div>
+				<div @click.capturet="finish" v-if="round.currentHole +1 == round.course.holes"  class="nav"><icon name="check" scale="3"  />
+				</div>
+			</b-col>
 		</b-row>
 	</b-container>
 
-	<playerCard v-for="(item, index) in players" :player="item" :par="holePar" :hole="$store.state.round.currentHole" :index="index" :key="index"></playerCard>
+	<playerCard v-for="(item, index) in players" :player="item" :par="holePar" :hole="round.currentHole" :index="index" :key="index"></playerCard>
+
+	<b-modal class="finishModal" v-model="finishModalShow" title="Finish Round" ok-title="View Scorecard" size="sm" @ok="viewScorecard">
+		<p>You can continue to edit after you finish the round.</p>
+	</b-modal>
 
   </div>
 </template>
@@ -20,18 +28,27 @@
 <script>
 import 'vue-awesome/icons/angle-left'
 import 'vue-awesome/icons/angle-right'
+import 'vue-awesome/icons/check'
 
 import playerCard from '../components/playerCard'
 
 export default {
   name: 'round',
+  data() {
+  	return {
+  		finishModalShow: false,
+  		saveSuccess: false,
+  		saveFailed: false
+  	}
+  },
   components: {
   	playerCard
   },
-  created() {
+  beforeRouteUpdate (to, from, next) {
   	if(this.$route.params.num != undefined) {
   		this.$store.commit('viewHole',this.$route.params.num -1)
   	}
+  	next()
   },
   computed: {
 	round() {
@@ -58,18 +75,28 @@ export default {
   },
   methods: {
   	prevPage() {
-  		this.$store.commit('setDefaultStrokes',this.$store.state.round.currentHole)
-  		this.$store.commit('viewHole',this.$store.state.round.currentHole -1)
+  		this.$store.commit('setDefaultStrokes',this.round.currentHole)
+  		this.$store.commit('viewHole',this.round.currentHole -1)
+  		this.$router.push('/round/' + (this.round.currentHole + 1));
   	},
   	nextPage() {
-  		this.$store.commit('setDefaultStrokes',this.$store.state.round.currentHole)
+  		this.$store.commit('setDefaultStrokes',this.round.currentHole)
   		this.$store.commit('viewHole',this.$store.state.round.currentHole +1)
-  	},  
+  		this.$router.push('/round/' + (this.round.currentHole + 1));
+  	}, 
+  	finish() {
+  		this.$store.commit('setDefaultStrokes',this.round.currentHole);
+  		this.finishModalShow = true;
+  	},
+  	viewScorecard() {
+  		this.$store.commit('finishRound');
+  		this.$router.push('/scorecard')
+  	}
   }
 }
 </script>
 
-<style scoped>
+<style >
 
 .header {
 	background: #dee8ee;
@@ -78,13 +105,14 @@ export default {
 }
 
 .header .nav {
+	position: absolute;
 	cursor: pointer;
 	padding: 0 8px;
 	max-width: 40px;
 }
 
-.align-right {
-	text-align: right
+.align-right .nav {
+	right: 8px;
 }
 
 .header .hole-num {
@@ -104,5 +132,7 @@ export default {
 .header .hole-info {
 	font-size: 22px;
 }
+
+
 
 </style>

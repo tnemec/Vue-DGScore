@@ -35,7 +35,7 @@ html, body {
   color: #2c3e50;
   width: 100%;
   height: 100%;
-  max-width: 640px;
+  max-width: 720px;
   margin: auto;
 }
 

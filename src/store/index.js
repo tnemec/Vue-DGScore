@@ -55,18 +55,23 @@ export default new Vuex.Store({
 
 		if(card) {
 			var totalStrokes = 0;
+			var midRoundStrokes = 0;
 			var currentPar = 0;
 			for(var i = 0; i < card.length; i++ ){
 				if(card[i] && card[i].s != undefined && card[i].s != 0) {
 					totalStrokes +=  card[i].s;
 					currentPar +=  (card[i].s - getters.holeData(i).par);
+					if(i < Math.floor(state.round.course.holes/2)) {
+						// calculate the mid round total
+						midRoundStrokes +=  card[i].s;
+					}
 				} 
 			}
 			currentPar = (currentPar > 0) ? '+' + currentPar: currentPar;
 			currentPar = (currentPar == 0) ? 'E' : currentPar;
-			return {'totalStrokes' : totalStrokes, 'currentPar' : currentPar};
+			return {'totalStrokes' : totalStrokes, 'currentPar' : currentPar, 'midRoundStrokes' : midRoundStrokes};
 		}
-		return {'totalStrokes' : '-', 'currentPar' : '-'};
+		return {'totalStrokes' : '-', 'currentPar' : '-', 'midRoundStrokes' : 0};
 	}
   },
   mutations: {
@@ -132,6 +137,28 @@ export default new Vuex.Store({
 				player.scorecard[hole].s = this.getters.holeData(hole).par;
 			}
 		}
+	},
+	finishRound(state) {
+		state.round.finished = true;
+		state.round.finishTime = new Date();
+	}
+  },
+  actions: {
+  	saveRound(context) {
+		console.log('Save Round');
+		try {
+			let history = JSON.parse(window.localStorage.getItem('dgScoreHistory'));
+			if(history && history.length) {
+				history.push(this.state.round);
+				window.localStorage.setItem('dgScoreHistory',JSON.stringify(history));
+			} else {
+				window.localStorage.setItem('dgScoreHistory',JSON.stringify(this.state.round));
+			}
+		} 
+		catch (e) {
+			console.log('Error saving round to localStorage ' + e)
+		}
+		
 	}
   }
 })

@@ -20,7 +20,7 @@
 		</div>
 	</div>
 	<div class="extras-bar"></div>
-	<chartLine :scores="player.scorecard"></chartLine>
+	<chartLine :scores="player.scorecard" :totals="score"></chartLine>
 
 
 
