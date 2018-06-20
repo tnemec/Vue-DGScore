@@ -23,7 +23,12 @@ export default new Vuex.Store({
     	currentHole: 0,
     	players: [
     	],
+    	holesPlayed: []
 
+    },
+    newround : {
+    	course: {},
+    	players: []
     },
     savedPlayers : [
 		{name: 'Steve', uid: 101, img: '', icon: ''}, 
@@ -84,12 +89,13 @@ export default new Vuex.Store({
 		}
 	},
 	selectCourse(state, selectedCourse) {
-		state.round.course = selectedCourse;
+		state.newround.course = selectedCourse;
 	},
 	selectPlayers(state, players) {
-		console.log('select players')
-		console.log(players)
-		state.round.players = players;
+		state.newround.players = players;
+	},
+	insertSavedPlayer(state, player) {
+		state.savedPlayers.push(player);
 	},
 	resetRound(state) {
 		state.round = {
@@ -100,9 +106,14 @@ export default new Vuex.Store({
     	course: {},
     	startingHole: 0,
     	currentHole: 0,
-    	players: []}
+    	players: [],
+    	holesPlayed: []}
 	},
 	startRound(state, startingHole) {
+		state.round.course = state.newround.course;
+		state.round.players = state.newround.players;
+		state.newround.course = {};
+		state.newround.players = [];
 		state.round.finished = false;
 		state.round.started = true;
 		state.round.startTime = new Date();
@@ -117,25 +128,38 @@ export default new Vuex.Store({
 		}
 	},
 	viewHole(state, i) {
-		state.round.currentHole = Math.max(0, Math.min(i, state.round.course.holes))
+		if(Number.isNaN(i)) {
+			state.round.currentHole = 0;
+		} else {
+			state.round.currentHole = Math.max(0, Math.min(i, state.round.course.holes))			
+		}
 	},
 	setStrokes(state, payload) {
-		let player = state.round.players[payload.player];
-		if(player) {
-			if(! player.scorecard) {
-				player.scorecard = []
+		console.log(payload)
+		for(let p = 0; p < state.round.players.length; p++) {
+			
+			if(state.round.players[p].uid == payload.player) {
+				let player = state.round.players[p];
+				if(! player.scorecard) {
+					player.scorecard = []
+				}
+				if(! player.scorecard[payload.hole]) {
+					player.scorecard[payload.hole] = {s:0}
+				}
+				 player.scorecard[payload.hole].s = payload.strokes
+				break;			
 			}
-			if(! player.scorecard[payload.hole]) {
-				player.scorecard[payload.hole] = {s:0}
-			}
-			 player.scorecard[payload.hole].s = payload.strokes
 		}
+
 	},
 	setDefaultStrokes(state, hole) {
 		for(let player of state.round.players) {
 			if(player.scorecard[hole].s == 0) {
 				player.scorecard[hole].s = this.getters.holeData(hole).par;
 			}
+		}
+		if(state.round.holesPlayed.indexOf(hole) == -1) {
+			state.round.holesPlayed.push(hole)
 		}
 	},
 	finishRound(state) {
@@ -148,12 +172,13 @@ export default new Vuex.Store({
 		console.log('Save Round');
 		try {
 			let history = JSON.parse(window.localStorage.getItem('dgScoreHistory'));
-			if(history && history.length) {
-				history.push(this.state.round);
-				window.localStorage.setItem('dgScoreHistory',JSON.stringify(history));
-			} else {
-				window.localStorage.setItem('dgScoreHistory',JSON.stringify(this.state.round));
+
+			if(! history || !history.length) {
+				let history = [];
 			}
+			history.push(this.state.round);
+			window.localStorage.setItem('dgScoreHistory',JSON.stringify(history));
+
 		} 
 		catch (e) {
 			console.log('Error saving round to localStorage ' + e)

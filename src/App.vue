@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <router-view/>
+    <transition name="slide">
+      <router-view />
+    </transition>
   </div>
 </template>
 
@@ -37,6 +39,29 @@ html, body {
   height: 100%;
   max-width: 720px;
   margin: auto;
+  position: relative;
+  overflow-x: hidden;
+  opacity: 1;
+}
+
+.slide-leave-active,
+.slide-enter-active {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: 720px;
+  transition: .2s;
+}
+.slide-enter {
+  transform: translate(100%, 0);
+}
+.slide-leave-to {
+  transform: translate(-100%, 0);
+  opacity: 0;
 }
 
 .list-group {
@@ -58,5 +83,17 @@ html, body {
 .spacerLg { 
   margin: 16px auto;
  }
+
+.fixed {
+  position: fixed;
+  padding: 16px;
+  width: 100%;
+  max-width: 720px;
+  bottom: 0px;
+  border-top: 1px solid #AAA;
+  overflow: hidden;
+}
+
+
 
 </style>

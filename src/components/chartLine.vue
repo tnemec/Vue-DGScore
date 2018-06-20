@@ -1,10 +1,11 @@
 <template>
 	<div class="score-chart">
-		<div v-for="(item, index) in scores" :key="index">
+		<div v-for="(item, index) in scores" :key="index" :class="{cur : highlight(index)}">
 			<div><b :class="cls(item,index)">{{item.s | nonZero}}</b></div>
 			<div class="total" v-if="index == midpoint && totals.midRoundStrokes"><b>{{totals.midRoundStrokes}}</b></div>
 			<div class="total" v-if="index == holes -1"><b>{{totals.totalStrokes}}</b></div>
 		</div>
+		<div class="par-calc"><div><b>{{totals.currentPar}}</b></div></div>
 	</div>
 	
 </template>
@@ -22,6 +23,9 @@ export default {
 		},
 		hole(num) {
 			return this.$store.getters.holeData(num)
+		},
+		round() {
+			return this.$store.state.round;
 		}
 	},
 	methods: {
@@ -30,8 +34,12 @@ export default {
 			if(item.p) {
 				str += ' pn'
 			}
+
 			return str
-		} 
+		},
+		highlight(index) {
+			return this.round.currentHole == index
+		}
 	},
 	filters: {
 		nonZero(value) {
@@ -45,10 +53,8 @@ export default {
 <style scoped>
 
 	.score-chart {
-		border-top: 1px solid #656565;
+		/*border-top: 1px solid #656565;*/
 		min-height: 27px;
-		overflow: hidden;
-		clear: both;
 	}
 
 	.score-chart div > div {
@@ -61,12 +67,6 @@ export default {
 		border-right: 1px solid #656565;
 		border-bottom: 1px solid #656565;
 		text-align: center;
-	}
-
-
-	.score-chart .total {
-		background-color: #777;
-		color: #FFF;
 	}
 
 	.score-chart .player {
@@ -132,6 +132,14 @@ export default {
 		border-radius: 10px;
 	}
 
+	.player-card .score-chart .cur > div{
+		background-color: rgba(105,231,171,0.3);
+	}
+
+	.score-chart .total {
+		background-color: #777 !important;
+		color: #FFF;
+	}
 
 	.score-chart .pn::before {
 		position: absolute;

@@ -1,5 +1,5 @@
 <template>
-  <div class="round">
+  <div class="round" :key="round.currentHole">
 	<b-container class="header">
 		<b-row  align-h="between">
 			<b-col cols="2"><div @click.capture="prevPage" v-if="hasPrev" class="nav"><icon name="angle-left" scale="3" /></div></b-col>
@@ -17,6 +17,16 @@
 	</b-container>
 
 	<playerCard v-for="(item, index) in players" :player="item" :par="holePar" :hole="round.currentHole" :index="index" :key="index"></playerCard>
+
+
+
+	<b-container class="fixed">
+		<b-row>
+			<b-col><b-button to="/" variant="link">Home</b-button></b-col>
+			<b-col style="text-align:right"><b-button to="/scorecard" variant="link" >View Scorecard</b-button></b-col>
+		</b-row>
+	</b-container>
+
 
 	<b-modal class="finishModal" v-model="finishModalShow" title="Finish Round" ok-title="View Scorecard" size="sm" @ok="viewScorecard">
 		<p>You can continue to edit after you finish the round.</p>
@@ -37,18 +47,17 @@ export default {
   data() {
   	return {
   		finishModalShow: false,
-  		saveSuccess: false,
-  		saveFailed: false
   	}
   },
   components: {
   	playerCard
   },
+
   beforeRouteUpdate (to, from, next) {
-  	if(this.$route.params.num != undefined) {
-  		this.$store.commit('viewHole',this.$route.params.num -1)
+  	if(to.params.num != undefined && ! Number.isNaN(to.params.num)) {
+  		this.$store.commit('viewHole',(to.params.num -1));
+  		next()  		
   	}
-  	next()
   },
   computed: {
 	round() {
@@ -74,15 +83,14 @@ export default {
 	}
   },
   methods: {
+  	// the route param is 1-indexed
   	prevPage() {
   		this.$store.commit('setDefaultStrokes',this.round.currentHole)
-  		this.$store.commit('viewHole',this.round.currentHole -1)
-  		this.$router.push('/round/' + (this.round.currentHole + 1));
+  		this.$router.push('/round/' + (this.round.currentHole));
   	},
   	nextPage() {
   		this.$store.commit('setDefaultStrokes',this.round.currentHole)
-  		this.$store.commit('viewHole',this.$store.state.round.currentHole +1)
-  		this.$router.push('/round/' + (this.round.currentHole + 1));
+  		this.$router.push('/round/' + (this.round.currentHole +2));
   	}, 
   	finish() {
   		this.$store.commit('setDefaultStrokes',this.round.currentHole);

@@ -16,22 +16,30 @@
   	</b-container>
 
   	<b-container class="chart">
-  		<b-row v-for="(item, index) in players">
+  		<b-row v-for="(item, index) in players" :key="index">
 			<b-col cols="2" class="player-name">{{item.name}}</b-col>
 			<b-col cols="10" class="grid">
 				<chartLine :scores="item.scorecard" :totals="item.score"></chartLine>
 			</b-col>
   		</b-row>
 
-  		
 
 
   	</b-container>
 
 
+	<b-container class="fixed">
+		<b-row>
+			<b-col><b-button to="/" variant="link">Home</b-button></b-col>
+			<b-col style="text-align:center"><b-button @click="resume"  variant="link">Return</b-button></b-col>
+			<b-col style="text-align:right"><b-button v-b-modal="'save'"  variant="link">Save Round</b-button></b-col>
+		</b-row>
+	</b-container>
 
 
-  	<b-modal class="saveModal" v-model="saveModalShow" title="Save Round"  size="sm" ok-title="Save" @ok="saveRound">
+
+
+  	<b-modal id="save" class="saveModal" v-model="saveModalShow" title="Save Round"  size="sm" ok-title="Save" @ok="saveRound">
   		<p>Verify the scorecard. After you save the round, you will no longer be able to edit it!</p>
 		<b-alert variant="success" :show="saveSuccess">The round has been saved</b-alert>
 		<b-alert variant="danger" :show="saveFailed">There was a problem saving the round!</b-alert>		
@@ -78,7 +86,10 @@ export default {
 		saveRound() {
 	  		this.$store.dispatch('saveRound');
 	  		this.saveSuccess = true;
-	  	}
+	  	},
+	  	resume() {
+	      this.$router.push('/round/' + (this.round.currentHole +1))
+	    }
 	}
 }
 </script>
@@ -113,6 +124,8 @@ export default {
 	padding-left: 0;
 	padding-right: 0;
 }
+
+
 
 
 </style>

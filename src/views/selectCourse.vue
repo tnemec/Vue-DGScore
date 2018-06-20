@@ -5,7 +5,9 @@
 			<b-list-group-item v-for="(item, index) in savedCourses" @click="selectCourse(index)" class="clickable" :key="index">{{item.name}}</b-list-group-item>
 		</b-list-group>
 
-		<b-button size="lg" variant="link" @click="back">Back</b-button>
+		<div class="fixed">
+			<b-button size="lg" variant="link" @click="back">Back</b-button>
+		</div>
 	</div>	
 </template>
 
@@ -41,7 +43,11 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 
+h3 {
+	padding: 16px 0;
+	text-align: center;
+}
 
 </style>

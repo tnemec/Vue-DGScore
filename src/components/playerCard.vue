@@ -8,7 +8,7 @@
 	</div>
 	<div class="player-grid">
 		<div class="player-picture"></div>
-		<div class="strokes">
+		<div class="strokes" :class="{ played : played }">
 			<div class="strokes-label">Strokes</div>
 			<div class="minus" @click.capture="subStroke">
 				<icon name="minus-circle" scale="2" />
@@ -22,7 +22,9 @@
 	<div class="extras-bar"></div>
 	<chartLine :scores="player.scorecard" :totals="score"></chartLine>
 
-
+	<b-modal ref="warning" size="sm" ok-title="Edit Score" @ok="unlock">
+		This hole has been played. Do you want to edit the score?
+	</b-modal>
 
   </div>
 </template>
@@ -41,7 +43,7 @@ export default {
   props: ['player','index', 'par', 'hole'],
   data() {
   	return {
-  		
+  		unlockEdit: false
   	}
   },
   created() {
@@ -52,24 +54,39 @@ export default {
   	},
   	score() {
   		return this.$store.getters.playerScore(this.index);
+  	},
+  	played() {
+  		return this.$store.state.round.holesPlayed.indexOf(this.hole) != -1 && ! this.unlockEdit; 
   	}
   },
   methods: {
   	addStroke() {
-  		let payload = {
-  			player: this.index,
-  			hole: this.hole,
-  			strokes: Math.min(this.currentStrokes + 1, this.$store.state.prefs.strokeLimit)
+  		if(this.played && ! this.unlockEdit) {
+  			this.$refs.warning.show();
+  		} else {
+	  		let payload = {
+	  			player: this.player.uid,
+	  			hole: this.hole,
+	  			strokes: Math.min(this.currentStrokes + 1, this.$store.state.prefs.strokeLimit)
+	  		}
+	  		this.$store.commit('setStrokes', payload)  			
   		}
-  		this.$store.commit('setStrokes', payload)
+
   	},
     subStroke() {
-  		let payload = {
-  			player: this.index,
-  			hole: this.hole,
-  			strokes: Math.max(this.currentStrokes -1, 1)
-  		}
-  		this.$store.commit('setStrokes', payload)
+		if(this.played && ! this.unlockEdit) {
+			this.$refs.warning.show();
+		} else {
+	  		let payload = {
+	  			player: this.player.uid,
+	  			hole: this.hole,
+	  			strokes: Math.max(this.currentStrokes -1, 1)
+	  		}
+	  		this.$store.commit('setStrokes', payload)
+	  	}
+  	}, 
+  	unlock() {
+  		this.unlockEdit = true;
   	}
   }
 }
@@ -160,6 +177,11 @@ export default {
 	width: 32px;
 	cursor: pointer
 }
+
+.player-card .player-grid .strokes.played .fa-icon {
+	fill: #bfced6;
+}
+
 .player-card  .player-grid .strokes .strokes-label {
 	font-size: 10px;
 	color: #777777;

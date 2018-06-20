@@ -1,33 +1,42 @@
 <template>
   <div class="newRound">
 
+
   		<h2>New Round</h2>
 
   		<b-container>
-  			<b-row>
-		  		<b-col>
-		  			<h3>Players:</h3>
-		  			<p v-for="item in round.players">{{item.name}}</p>
-		  			<b-button @click="selectPlayer" size="sm">{{addEditText}}</b-button>
-		  		</b-col>
+  			<b-row class="section">
+		  		<b-col cols="3"><strong>Players:</strong></b-col>
+		  		<b-col cols="6"><p v-for="item in round.players" style="text-align: left">{{item.name}}</p></b-col>
+		  		<b-col cols="3"><b-button @click="selectPlayer"  variant="link">{{addEditText}}</b-button></b-col>
+		  	</b-row>
 
+		  	<b-row class="section">
 
-		  		<b-col>
-		  			<h3>Course:</h3>
-		  			<p>{{round.course.name}}</p>
-		  			<b-button @click="selectCourse" size="sm">Select Course</b-button>
-		  		</b-col>
+		  		<b-col cols="3"><strong>Course:</strong></b-col>
+		  		<b-col cols="6"><p>{{round.course.name}}</p></b-col>
+		  		<b-col cols="3"><b-button @click="selectCourse" variant="link">Select Course</b-button></b-col>
 
 		  	</b-row>
 		</b-container>
 
 
-		  	<div class="spacerLg"></div>
+		<b-container>
+  			<b-row class="section">
+
+		  		<b-col><label for="startHole">Starting Hole:</label> <b-form-input id="startHole" type="number" v-model="startingHole" min="1" :max="round.course.holes" /></b-col>
 
 
-		  		<p><label for="startHole">Starting Hole:</label> <b-form-input id="startHole" type="number" v-model="startingHole" min="1" :max="round.course.holes" /></p>
+		  	</b-row>
+		  	<b-row>
 
-		  		<p><b-button @click="startNewRound" size="sm">Start Round</b-button></p>
+		  		<b-col><b-button @click="cancel" variant="link">Cancel</b-button></b-col>
+
+
+		  		<b-col>	<b-button @click="startNewRound"  variant="primary" :disabled="! readyToStart">Start Round</b-button></b-col>
+		  	</b-row>
+		 </b-container>
+
 
 
 
@@ -54,10 +63,13 @@ export default {
   		return this.$store.state.user
   	},
   	round() {
-  		return this.$store.state.round  		
+  		return this.$store.state.newround  		
   	},
   	addEditText() {
   		return (this.round.players.length) ? 'Edit Players' : 'Add Players'
+  	},
+  	readyToStart() {
+  		return this.round.players.length != 0 && this.round.course;
   	}
   },
   methods: {
@@ -70,6 +82,9 @@ export default {
   	startNewRound() {
   		this.$store.commit('startRound', this.startingHole -1);
   		this.$router.push('/round');
+  	},
+  	cancel() {
+  		this.$router.push('/');
   	}
   }
 
@@ -80,15 +95,24 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 
-.newRound h3 {
-	font-size: 18px;
-	line-height: 20px;
+.newRound {
+	text-align: center;
+	padding-top: 12px;
+}
+
+.newRound h2 {
+	margin-bottom: 24px;
+}
+
+.newRound .section {
+	padding: 16px 0;
+	border-top: 1px solid #DDD;
 }
 
 #startHole {
-	max-width: 50px;
+	max-width: 60px;
 	display: inline-block;
 }
 
