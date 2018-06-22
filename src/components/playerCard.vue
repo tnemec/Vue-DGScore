@@ -10,11 +10,11 @@
 		<div class="player-picture"></div>
 		<div class="strokes" :class="{ played : played }">
 			<div class="strokes-label">Strokes</div>
-			<div class="minus" @click.capture="subStroke">
+			<div class="minus" @click.capture="subStroke" v-if="! round.finished">
 				<icon name="minus-circle" scale="2" />
 			</div>
 			<div class="stroke-value" >{{currentStrokes}}</div>
-			<div  class="plus" @click.capture="addStroke">
+			<div  class="plus" @click.capture="addStroke" v-if="! round.finished">
 				<icon name="plus-circle" scale="2" />
 			</div>
 		</div>
@@ -49,8 +49,11 @@ export default {
   created() {
   },
   computed: {
+  	round() {
+  		return this.$store.state.round;
+  	},
   	currentStrokes() {
-  		return Math.max(this.player.scorecard[this.hole].s || this.par, 0)
+  		return this.player.scorecard[this.hole].s || this.par
   	},
   	score() {
   		return this.$store.getters.playerScore(this.index);
@@ -97,7 +100,7 @@ export default {
 .player-picture{
 	background-color: #DDDDDD;
 	border-radius: 100%;
-	margin: 6px 16px 8px  28px;
+	margin: 6px 16px 8px  16px;
 	float: left;
 	background-repeat: no-repeat;
 	background-position: 50% 50%;

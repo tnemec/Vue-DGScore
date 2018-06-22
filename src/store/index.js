@@ -11,7 +11,7 @@ export default new Vuex.Store({
 		strokeLimit : 9,
   	},
     user : {
-    	name: 'Tony', uid: 100, img: '', icon: ''
+    	
     },
     round : {
     	started: false,
@@ -31,6 +31,7 @@ export default new Vuex.Store({
     	players: []
     },
     savedPlayers : [
+    	{name: 'Tony', uid: 100, img: '', icon: ''},
 		{name: 'Steve', uid: 101, img: '', icon: ''}, 
 		{name: 'Andrew', uid: 102, img: '', icon: ''}, 
 	]
@@ -95,8 +96,11 @@ export default new Vuex.Store({
 		state.newround.players = players;
 	},
 	insertSavedPlayer(state, player) {
-		state.savedPlayers.push(player);
+		state.savedPlayers.splice(0,0,player);
 	},
+	removeSavedPlayer(state, index) {
+		state.savedPlayers.splice(index,1);
+	},	
 	resetRound(state) {
 		state.round = {
 		started: false,
@@ -165,25 +169,32 @@ export default new Vuex.Store({
 	finishRound(state) {
 		state.round.finished = true;
 		state.round.finishTime = new Date();
+	},
+	replaceRound(state, savedRound) {
+		state.round = savedRound;
 	}
   },
   actions: {
   	saveRound(context) {
-		console.log('Save Round');
-		try {
-			let history = JSON.parse(window.localStorage.getItem('dgScoreHistory'));
+  		return new Promise((resolve, reject) => {
+			console.log('Save Round');
+			this.commit('finishRound');
+			try {
+				let history = JSON.parse(window.localStorage.getItem('dgScoreHistory'));
 
-			if(! history || !history.length) {
-				let history = [];
+				if(! history || ! history.length) {
+					history = [];
+				}
+				history.push(this.state.round);
+				window.localStorage.setItem('dgScoreHistory',JSON.stringify(history));
+				resolve()
+			} 
+			catch (e) {
+				console.log('Error saving round to localStorage ' + e);
+				reject()
 			}
-			history.push(this.state.round);
-			window.localStorage.setItem('dgScoreHistory',JSON.stringify(history));
+		})
 
-		} 
-		catch (e) {
-			console.log('Error saving round to localStorage ' + e)
-		}
-		
 	}
   }
 })

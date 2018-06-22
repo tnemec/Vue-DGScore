@@ -10,7 +10,7 @@
 			</b-col>
 			<b-col cols="2" class="align-right">
 				<div @click.capturet="nextPage" v-if="hasNext"  class="nav"><icon name="angle-right" scale="3"  /></div>
-				<div @click.capturet="finish" v-if="round.currentHole +1 == round.course.holes"  class="nav"><icon name="check" scale="3"  />
+				<div @click.capturet="finish" v-if="round.currentHole +1 == round.course.holes && ! round.finished"  class="nav"><icon name="check" scale="3"  />
 				</div>
 			</b-col>
 		</b-row>
@@ -93,11 +93,10 @@ export default {
   		this.$router.push('/round/' + (this.round.currentHole +2));
   	}, 
   	finish() {
-  		this.$store.commit('setDefaultStrokes',this.round.currentHole);
+  		this.$store.commit('setDefaultStrokes',this.round.currentHole)
   		this.finishModalShow = true;
   	},
   	viewScorecard() {
-  		this.$store.commit('finishRound');
   		this.$router.push('/scorecard')
   	}
   }
