@@ -1,9 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'Vuex'
+import Auth from './modules/auth'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+  modules : {
+  	auth: Auth
+  },
   state: {
   	prefs: {
   		defaultPar: 3,

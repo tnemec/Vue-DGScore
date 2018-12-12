@@ -41,6 +41,10 @@ export default new Router({
       name: 'Scorecard',
       component: scorecard
     },    
-
+    {
+      path: '/newuser',
+      name: 'Newuser',
+      component: newuser
+    },    
   ]
 })
